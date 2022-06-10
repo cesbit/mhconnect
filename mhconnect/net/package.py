@@ -1,5 +1,7 @@
-import struct
+from __future__ import annotations
 import msgpack
+import struct
+from typing import Optional
 
 
 class Package(object):
@@ -8,7 +10,7 @@ class Package(object):
 
     st_package = struct.Struct('<IHBB')
 
-    def __init__(self, barray=None):
+    def __init__(self, barray: Optional[bytearray] = None):
         if barray is None:
             return
 
@@ -20,7 +22,8 @@ class Package(object):
         self.data = None
 
     @classmethod
-    def make(cls, tp, data=b'', pid=0, is_binary=False):
+    def make(cls, tp: int, data: bytes = b'', pid: int = 0,
+             is_binary: bool = False) -> Package:
         pkg = cls()
         pkg.tp = tp
         pkg.pid = pid
@@ -32,7 +35,7 @@ class Package(object):
         pkg.length = len(data)
         return pkg
 
-    def to_bytes(self):
+    def to_bytes(self) -> bytes:
         header = self.st_package.pack(
             self.length,
             self.pid,
@@ -41,7 +44,7 @@ class Package(object):
 
         return header + self.data
 
-    def extract_data_from(self, barray):
+    def extract_data_from(self, barray: bytearray):
         self.data = None
         try:
             if self.length:
@@ -51,5 +54,5 @@ class Package(object):
         finally:
             del barray[:self.total]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<id: {0.pid} size: {0.length} tp: {0.tp}>'.format(self)
