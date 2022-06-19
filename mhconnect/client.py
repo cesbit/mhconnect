@@ -41,40 +41,47 @@ class ApiClient:
         finally:
             self._connecting = False
 
-    async def get_path(self, container_ids: list, host_ids: list, path: list,
+    async def get_state(self, container_id: int, asset_id: int) -> dict:
+        pkg = Package.make(
+            ApiProtocol.PROTO_REQ_STATE,
+            data=[container_id, asset_id]
+        )
+        return await self._request(pkg)
+
+    async def get_path(self, container_ids: list, asset_ids: list, path: list,
                        metrics: Optional[list] = None,
                        expr: Optional[dict] = None) -> list:
         pkg = Package.make(
             ApiProtocol.PROTO_REQ_PATH,
-            data=[container_ids, host_ids, path, metrics, expr]
+            data=[container_ids, asset_ids, path, metrics, expr]
         )
         return await self._request(pkg)
 
-    async def get_path_set(self, container_ids: list, host_ids: list,
+    async def get_path_set(self, container_ids: list, asset_ids: list,
                            path: list, metric: str) -> list:
         pkg = Package.make(
             ApiProtocol.PROTO_REQ_PATH_SET,
-            data=[container_ids, host_ids, path, metric]
+            data=[container_ids, asset_ids, path, metric]
         )
         return await self._request(pkg)
 
-    async def get_paths(self, container_ids: list,
-                        host_ids: Optional[list] = [],
-                        paths: Optional[list] = []) -> list:
+    async def get_notifications(self, container_ids: list,
+                                asset_ids: Optional[list] = [],
+                                paths: Optional[list] = []) -> list:
         pkg = Package.make(
-            ApiProtocol.PROTO_REQ_PATHS,
-            data=[container_ids, host_ids, paths]
+            ApiProtocol.PROTO_REQ_NOTIFICATIONS,
+            data=[container_ids, asset_ids, paths]
         )
         return await self._request(pkg)
 
     async def get_alerts(self, container_ids: list,
-                         host_ids: Optional[list] = [],
+                         asset_ids: Optional[list] = [],
                          paths: Optional[list] = [],
                          user_id: Optional[int] = None,
                          all_messages: Optional[bool] = False) -> list:
         pkg = Package.make(
             ApiProtocol.PROTO_REQ_ALERTS,
-            data=[container_ids, host_ids, paths, user_id, all_messages]
+            data=[container_ids, asset_ids, paths, user_id, all_messages]
         )
         return await self._request(pkg)
 
