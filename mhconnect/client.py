@@ -109,10 +109,11 @@ class ApiClient:
         )
         return await self._request(pkg)
 
-    async def send(self, path: list, rows: dict, ts: int):
+    async def send(self, path: list, check_data: dict):
         pkg = Package.make(
             ApiProtocol.PROTO_REQ_DATA,
-            data=[path, rows, ts]
+            data=[path, check_data],
+            partid=path[1],  # asset_id
         )
         return await self._request(pkg)
 
